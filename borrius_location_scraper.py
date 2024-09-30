@@ -250,13 +250,35 @@ async def getSurfLocations():
                     }
                 )
 
+def fillInEvolutionGaps ():
+    with open("scraperData/LOCATION/pokelocation.json", "r") as fp:
+        data = json.load(fp)
+        for pokemon in data:
+            existingPokemon = next(
+                (p for p in locationDataList if p["pokemon"] == pokemon["name"]), None
+            )
+            if existingPokemon is None:
+                locationDataList.append(
+                    {
+                        "pokemon": pokemon["name"],
+                        "locationData": [
+                            {
+                                "location": pokemon["location"],
+                                "encounterMethod": "Evolution",
+                                "timeOfDay": "All Day",
+                                "isSpecialEncounter": 0,
+                            }
+                        ],
+                    }
+                )
 
 async def printLocationJson():
     try:
-        await getGrassCaveLocations()
-        await getSurfLocations()
-        await getFishingLocations()
-        await getUniquePokemon()
+        # await getGrassCaveLocations()
+        # await getSurfLocations()
+        # await getFishingLocations()
+        # await getUniquePokemon()
+        await fillInEvolutionGaps()
         fileName = "scraperData/locationData.json"
         with open(fileName, "w") as fp:
             json.dump(locationDataList, fp, indent=4)
